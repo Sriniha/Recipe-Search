@@ -1,0 +1,143 @@
+# Recipe Search Platform Backend Documentation
+
+## Setup Instructions
+
+1. Clone the repository:
+   ```
+   git clone <repository-url>
+   cd <repository-directory>
+   ```
+
+2. Create a virtual environment:
+   ```
+   python -m venv venv
+   ```
+
+3. Activate the virtual environment:
+   - On Windows:
+     ```
+     venv\Scripts\activate
+     ```
+   - On macOS and Linux:
+     ```
+     source venv/bin/activate
+     ```
+
+4. Install dependencies:
+   ```
+   pip install -r requirements.txt
+   ```
+
+5. Set up OpenSearch:
+   - Ensure OpenSearch is installed and running on localhost:9200
+   - Configure OpenSearch with the credentials used in the scripts (admin/Bin2@2305)
+
+## Dependency Installation
+
+Create a `requirements.txt` file with the following contents:
+
+```
+flask
+opensearch-py
+pandas
+```
+
+Install the dependencies using:
+
+```
+pip install -r requirements.txt
+```
+
+## Data Ingestion
+
+1. Prepare the bulk index data:
+   ```
+   python Backend/scripts/prepare_bulk_index_data.py
+   ```
+   This script will create a JSON file (`epi_r_bulk.json`) from the CSV data.
+
+2. Ingest the data into OpenSearch:
+   ```
+   python Backend/scripts/ingest_data_to_opensearch.py
+   ```
+   This script will bulk upload the prepared data into OpenSearch.
+
+## Running the Application
+
+Start the Flask application:
+
+```
+python Backend/app.py
+```
+
+The application will run on `http://localhost:5000` by default.
+
+## API Endpoints
+
+### 1. Search Recipes
+
+- **Endpoint:** `/api/search`
+- **Method:** GET
+- **Query Parameters:**
+  - `q`: Search query string
+  - `page`: Page number (default: 1)
+  - `size`: Number of results per page (default: 10)
+- **Response:**
+  ```json
+  {
+    "recipes": [
+      {
+        "id": "string",
+        "title": "string",
+        "ingredients": "string",
+        "directions": "string",
+        "rating": "number",
+        "calories": "number"
+      }
+    ],
+    "total": "number",
+    "page": "number",
+    "size": "number"
+  }
+  ```
+
+### 2. Get Filters
+
+- **Endpoint:** `/api/filters`
+- **Method:** GET
+- **Response:**
+  ```json
+  {
+    "calories": ["string"],
+    "dietary": ["string"]
+  }
+  ```
+
+## Error Handling
+
+Both endpoints return a JSON object with an "error" key in case of exceptions:
+
+```json
+{
+  "error": "Error message"
+}
+```
+
+## Data Structure
+
+The recipe data in OpenSearch includes the following fields:
+- id
+- title
+- rating
+- calories
+- protein
+- fat
+- sodium
+- Various boolean fields for dietary restrictions (e.g., vegetarian, vegan, etc.)
+
+## Notes
+
+- Ensure that the file paths in the scripts are updated to match your local directory structure.
+- The OpenSearch client is configured to use SSL but not verify certificates. In a production environment, proper SSL configuration is recommended.
+- The `dietary` filter options are currently hardcoded. If these fields change in your data, update the `get_filters` function in `app.py` accordingly.
+
