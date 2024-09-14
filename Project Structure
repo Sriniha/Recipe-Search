@@ -1,0 +1,15 @@
+recipe-search/
+├── backend/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── scripts/
+│       └── index_data.py
+├── frontend/
+│   ├── public/
+│   └── src/
+│       ├── components/
+│       ├── pages/
+│       ├── services/
+│       ├── App.js
+│       └── index.js
+└── README.md
